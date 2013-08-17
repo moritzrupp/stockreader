@@ -3,7 +3,7 @@
  * Of the project stockreader.
  * Copyright 2013 by Moritz Rupp. All rights reserved.
  */
-package stockreader.model;
+package de.moritzrupp.stockreader.model;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
