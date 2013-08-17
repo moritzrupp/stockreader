@@ -52,7 +52,7 @@ public class Stock {
 	private double previousClose;
 	
 	@XmlElement(name="PercentageChange")
-	private double percentageChange;
+	private String percentageChange;
 	
 	@XmlElement(name="AnnRange")
 	private String annRange;
@@ -65,7 +65,7 @@ public class Stock {
 	
 	@XmlElement(name="Name")
 	private String name;
-
+	
 	public Stock() { }
 	
 	/**
@@ -89,8 +89,8 @@ public class Stock {
 	 */
 	public Stock(String symbol, double last, String date, String time,
 			double change, double open, double high, double low, int volume,
-			double mktCap, double previousClose, double percentageChange,
-			String annRange, double earns, double pe, String name) {
+			double mktCap, double previousClose, String percentageChange,
+			String annRange, double earns, double pe, String name) throws ParseException {
 		super();
 		
 		this.symbol = symbol;
@@ -203,7 +203,7 @@ public class Stock {
 	 * getPercentageChange
 	 * @return the percentageChange
 	 */
-	public double getPercentageChange() {
+	public String getPercentageChange() {
 		return percentageChange;
 	}
 
@@ -238,7 +238,7 @@ public class Stock {
 	public String getName() {
 		return name;
 	}
-
+	
 	/**
 	 * setSymbol
 	 * @param symbol the symbol to set
@@ -260,7 +260,7 @@ public class Stock {
 	 * @param date the date to set
 	 * @throws ParseException 
 	 */
-	public void setDate(String date) {
+	public void setDate(String date) throws ParseException {
 
 		this.date = date;
 	}
@@ -333,7 +333,7 @@ public class Stock {
 	 * setPercentageChange
 	 * @param percentageChange the percentageChange to set
 	 */
-	public void setPercentageChange(double percentageChange) {
+	public void setPercentageChange(String percentageChange) {
 		this.percentageChange = percentageChange;
 	}
 
@@ -369,6 +369,7 @@ public class Stock {
 		this.name = name;
 	}
 
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
@@ -377,15 +378,13 @@ public class Stock {
 		return "Stock [" + (symbol != null ? "symbol=" + symbol + ", " : "")
 				+ "last=" + last + ", "
 				+ (date != null ? "date=" + date + ", " : "")
-				+ (time != null ? "time=" + time + ", " : "") + "change="
-				+ change + ", open=" + open + ", high=" + high + ", low=" + low
+				+ (time != null ? "time=" + time + ", " : "") 
+				+ "change=" + change + ", open=" + open + ", high=" + high + ", low=" + low
 				+ ", volume=" + volume + ", mktCap=" + mktCap
-				+ ", previousclosee=" + previousClose + ", percentageChange="
+				+ ", previousClose=" + previousClose + ", percentageChange="
 				+ percentageChange + ", "
 				+ (annRange != null ? "annRange=" + annRange + ", " : "")
 				+ "earns=" + earns + ", pe=" + pe + ", "
-				+ (name != null ? "name=" + name : "") + "]";
+				+ (name != null ? "name=" + name + ", " : "");
 	}
-	
-	
 }
