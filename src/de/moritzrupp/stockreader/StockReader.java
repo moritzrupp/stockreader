@@ -17,13 +17,26 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.NoSuchProviderException;
+import javax.mail.Session;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import net.webservicex.StockQuote;
 import net.webservicex.StockQuoteSoap;
+
+import com.sun.mail.smtp.SMTPTransport;
+
 import de.moritzrupp.stockreader.model.StockQuotes;
 
 /**
@@ -340,6 +353,61 @@ public class StockReader {
         }
         bw.flush();
         bw.close();
+	}
+	
+	public void sendmail(String from, String to, String subject, String host, String user, String password) {
+		
+		Properties props = System.getProperties();
+		props.put("mail.smtp.host", host);
+		props.put("mail.smtps.auth", "true");
+		props.put("mail.smtp.starttls.enable", true);
+		
+		Session session = Session.getInstance(props, null);
+		
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy, HH:mm");
+		
+		String message = "Lieber Detlef,\n\n"
+				+ "anbei erhältst du die aktuellen Aktienkurse vom " + dateFormat.format(new Date()) + ".\n\n"
+				+ "Viele Grüße,\n"
+				+ "Moritz\n";
+		
+		SMTPTransport t;
+		try {
+			
+			MimeMessage msg = new MimeMessage(session);
+			msg.setFrom(new InternetAddress(from));
+			InternetAddress[] address = {new InternetAddress(to)};
+			msg.setRecipients(Message.RecipientType.TO, address);
+			msg.setSubject(subject);
+			
+			MimeBodyPart mbp1 = new MimeBodyPart();
+			mbp1.setText(message);
+			
+			MimeBodyPart mbp2 = new MimeBodyPart();
+			mbp2.attachFile(getCsvFile());
+			
+			Multipart mp = new MimeMultipart();
+			mp.addBodyPart(mbp1);
+			mp.addBodyPart(mbp2);
+			
+			msg.setContent(mp);
+			msg.setSentDate(new Date());
+			
+			t = (SMTPTransport) session.getTransport("smtps");
+			
+			t.connect(host, user, password);
+			t.sendMessage(msg, msg.getAllRecipients());
+			t.close();
+		} catch (NoSuchProviderException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (MessagingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
 	}
 	
 	/**

@@ -18,6 +18,7 @@ import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
@@ -42,6 +43,12 @@ public class Main {
 	private static boolean fileArg = false;
 	private static File theFile;
 	
+	private static String host;
+	private static String username;
+	private static String passwd;
+	private static String to;
+	private static String from;
+	
 	
 	/**
 	 * main
@@ -55,7 +62,7 @@ public class Main {
 		if(args.length == 0) { // if no arguments
 			
 			formatter.printHelp("stockreader", header, options, footer);
-			System.exit(-1);
+			System.exit(1);
 		}
 		
 		try {
@@ -84,6 +91,12 @@ public class Main {
 				fileArg = true;
 				theFile = new File(line.getOptionValue("f"));
 			}
+			
+			host = line.getOptionValue("host");
+			username = line.getOptionValue("user");
+			passwd = line.getOptionValue("password");
+			from = line.getOptionValue("from");
+			to = line.getOptionValue("to");
 		}
 		catch(ParseException exp) {
 			// TODO Auto-generated catch block
@@ -103,7 +116,7 @@ public class Main {
 							
 							System.err.println("Not a valid argument: " + args[i]);
 							printHelp();
-							System.exit(-1);
+							System.exit(1);
 						}
 						
 						if(args[i].charAt(1) == 'f' || (args[i].charAt(1) == '-' && args[i].charAt(2) == 'f')) {
@@ -123,6 +136,7 @@ public class Main {
 
 			reader.getQuotes();
 			reader.writeToCSV(priceArg);
+			reader.sendmail(from, to, "Aktienkurse", host, username, passwd);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -148,15 +162,66 @@ public class Main {
 		Option price = new Option("p", "price", false, "prints only the symbol, the date and the price of the stock");
 		Option csv = OptionBuilder.withArgName("FILE")
 				.withLongOpt("file")
-				.withDescription("The path and file name to the exported file")
+				.withDescription("the path and file name to the exported file")
 				.hasArg()
 				.create("f");
+		
+		Option host = OptionBuilder.withArgName("HOST")
+				.withLongOpt("host")
+				.withDescription("the SMTP host for sending mails")
+				.hasArg()
+				.withValueSeparator('=')
+				.isRequired()
+				.create();
+		
+		Option password = OptionBuilder.withArgName("PASS")
+				.withLongOpt("password")
+				.withDescription("the password of the mail user")
+				.hasArg()
+				.withValueSeparator('=')
+				.isRequired()
+				.create();
+		
+		Option user = OptionBuilder.withArgName("USERNAME")
+				.withLongOpt("user")
+				.withDescription("the mail user")
+				.hasArg()
+				.withValueSeparator('=')
+				.isRequired()
+				.create();
+		
+		Option from = OptionBuilder.withArgName("FROM")
+				.withLongOpt("from")
+				.withDescription("the FROM address")
+				.hasArg()
+				.withValueSeparator('=')
+				.isRequired()
+				.create();
+		
+		Option to = OptionBuilder.withArgName("TO")
+				.withLongOpt("to")
+				.withDescription("the TO address")
+				.hasArg()
+				.withValueSeparator('=')
+				.isRequired()
+				.create();
+		
+		OptionGroup mailGroup = new OptionGroup();
+		mailGroup.addOption(host);
+		mailGroup.addOption(user);
+		mailGroup.addOption(password);
+		mailGroup.addOption(from);
+		mailGroup.addOption(to);
+		
+		mailGroup.setRequired(true);
 		
 		options = new Options();
 		options.addOption(help);
 		options.addOption(version);
 		options.addOption(price);
 		options.addOption(csv);
+		
+		options.addOptionGroup(mailGroup);
 		
 		formatter = new HelpFormatter();
 		header = "Pass the stock symbols as arguments and seperate them by spaces. At least one stock symbol is required.\n"
