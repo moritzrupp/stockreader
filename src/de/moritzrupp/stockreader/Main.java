@@ -28,7 +28,7 @@ import org.apache.commons.cli.ParseException;
  */
 public class Main {
 
-	private static final String VERSION = "0.0.1";
+	private static final String VERSION = "0.0.2";
 	
 	private static HelpFormatter formatter;
 	private static String header;
