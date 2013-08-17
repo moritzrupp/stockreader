@@ -3,7 +3,7 @@
  * Of the project stockreader.
  * Copyright 2013 by Moritz Rupp. All rights reserved.
  */
-package stockreader;
+package de.moritzrupp.stockreader;
 
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
@@ -29,7 +29,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import stockreader.model.StockQuotes;
+import de.moritzrupp.stockreader.model.StockQuotes;
 
 
 /**
