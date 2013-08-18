@@ -364,12 +364,10 @@ public class StockReader {
 		
 		Session session = Session.getInstance(props, null);
 		
-		SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy, HH:mm");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy, hh:mma Z");
 		
-		String message = "Lieber Detlef,\n\n"
-				+ "anbei erhältst du die aktuellen Aktienkurse vom " + dateFormat.format(new Date()) + ".\n\n"
-				+ "Viele Grüße,\n"
-				+ "Moritz\n";
+		String message = "Hi,\n\n"
+				+ "here are the latest stock quotes from the " + dateFormat.format(new Date()) + ".\n\n";
 		
 		SMTPTransport t;
 		try {
